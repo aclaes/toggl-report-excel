@@ -22,7 +22,7 @@ const durationInMinutes = (duration = "") => {
 const prepareDescription = (description = "") => {
   const regexTicket = /^([A-Z0-9]+-[0-9]+):.+$/g;
   const regexMeeting = /^Meeting:\s?(.+)$/g;
-  const regexPLAN = /^PLAN:/g;
+  const regexPLAN = /^PLAN:\s(.+)$/g;
 
   let res;
 
@@ -35,7 +35,8 @@ const prepareDescription = (description = "") => {
   }
 
   if (description.match(regexPLAN)) {
-    res = "PLAN";
+    // res = "PLAN";
+    res = description.replace(regexPLAN, "$1");
   }
 
   if (!res) {
@@ -50,7 +51,7 @@ const prepareDateOutput = (date) => {
   return date.replace(regexp, "$<day>.$<month>.$<year>");
 };
 
-const prepareDurationOutpu = (duration) => {
+const prepareDurationOutput = (duration) => {
   const hours = Math.floor(duration / 60);
   const quarters = Math.round((duration - hours * 60) / 15);
   if (quarters === 0) {
@@ -129,17 +130,38 @@ const processRows = (rows = []) => {
   return aggregatedDays;
 };
 
-const formattedOutput = (days) => {
+const formattedOutputAsRowPerTask = (days) => {
   Object.keys(days).forEach((day) => {
     const dayEntries = days[day];
     dayEntries.map((entry) => {
       const outRow = [
         prepareDateOutput(day),
-        prepareDurationOutpu(entry.duration),
+        prepareDurationOutput(entry.duration),
         entry.description,
       ];
       console.log('"' + outRow.join('","') + '"');
     });
+  });
+};
+
+const formattedOutputAsRowPerDay = (days, separator) => {
+  Object.keys(days).forEach((day) => {
+    const dayEntries = days[day];
+
+    const descriptions = dayEntries.map((entry) => entry.description);
+    const durations = dayEntries.map((entry) => entry.duration);
+
+    const outDescription = descriptions.join(separator);
+    const outDuration = durations.reduce((acc, curr) => {
+      return acc + curr;
+    }, 0);
+
+    const outRow = [
+      prepareDateOutput(day),
+      outDescription,
+      prepareDurationOutput(outDuration),
+    ];
+    console.log('"' + outRow.join('","') + '"');
   });
 };
 
@@ -156,6 +178,7 @@ fs.readFile(csvPath, (err, data) => {
     // console.log(rows);
     const res = processRows(rows);
 
-    formattedOutput(res);
+    // formattedOutputAsRowPerTask(res);
+    formattedOutputAsRowPerDay(res, " / ");
   });
 });
