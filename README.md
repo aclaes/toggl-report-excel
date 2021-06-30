@@ -4,7 +4,7 @@
 
 Node >= Version 14
 
-## Installlation
+## Installation
 
 ```
 npm i
@@ -12,12 +12,18 @@ npm i
 
 ## Preparation
 
+Download CSV file from toggl track
+
+```
+Reports > Detailed > Download CSV
+```
+
 Move downloaded CSV file to a location readable from terminal (e.g. user dir)
 
 ## Run
 
 ```
-node index.js ~/Toggl_time_entries_2020-11-01_to_2020-11-30.csv | pbcopy
+node index.js ~/Downloads/Toggl_time_entries_yyyy-mm-dd_to_yyyy-mm-dd.csv | pbcopy
 ```
 
-Copy & paste CSV data from clipboard into Excel
+Copy & paste CSV data from clipboard into Excel by using the CSV importer.

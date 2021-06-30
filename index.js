@@ -35,7 +35,6 @@ const prepareDescription = (description = "") => {
   }
 
   if (description.match(regexPLAN)) {
-    // res = "PLAN";
     res = description.replace(regexPLAN, "$1");
   }
 
@@ -85,8 +84,6 @@ const processRows = (rows = []) => {
     return acc;
   }, {});
 
-  // console.log(days);
-
   const aggregatedDays = Object.keys(days).reduce((acc, date) => {
     let day = days[date];
 
@@ -94,7 +91,7 @@ const processRows = (rows = []) => {
     let combinedEntries = new Map();
 
     day.forEach((item) => {
-      if (item.description !== "Daily") {
+      if (!item.description.includes("Daily")) {
         if (!combinedEntries.has(item.description)) {
           combinedEntries.set(item.description, item);
         } else {
@@ -112,8 +109,9 @@ const processRows = (rows = []) => {
     // Sort so that highest duration is at the start
     combinedEntriesArr.sort((a, b) => b.duration - a.duration);
 
+    // Filter out the daily meeting and add to entry with highest duration
     let dailyDuration = day
-      .filter((entry) => entry.description === "Daily")
+      .filter((entry) => entry.description.includes("Daily"))
       .reduce((acc, curr) => {
         return acc + curr.duration;
       }, 0);
@@ -175,7 +173,6 @@ fs.readFile(csvPath, (err, data) => {
     if (err) {
       throw "Error: " + err;
     }
-    // console.log(rows);
     const res = processRows(rows);
 
     // formattedOutputAsRowPerTask(res);
