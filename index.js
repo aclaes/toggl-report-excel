@@ -39,7 +39,8 @@ const prepareDescription = (description = "") => {
   }
 
   if (!res) {
-    throw `Error: UNUSUAL DESCRIPTION: ${description}`;
+    // throw `Error: UNUSUAL DESCRIPTION: ${description}`;
+    res = description;
   }
 
   return res.trim();
